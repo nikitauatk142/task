@@ -1,0 +1,93 @@
+---
+- hosts: all
+  become: yes
+  remote_user: ec2-user
+  vars:
+    ansible_ssh_host_key_checking: false
+    app_name: my-flask-app
+    app_dir: /home/ec2-user/application
+    venv_dir: /home/ec2-user/application/venv
+    python_version: python3
+    gunicorn_workers: 3
+
+  tasks:
+  
+    - name: Install required system packages
+      yum:
+        name: 
+          - python3-pip
+          - nginx
+        state: present
+
+    - name: Copy application
+      copy:
+        src: app/
+        dest: "{{ app_dir }}/"
+        owner: ec2-user
+        group: ec2-user
+
+    - name: Create virtual environment
+      become_user: ec2-user
+      command: "{{ python_version }} -m venv {{ venv_dir }}"
+      args:
+        creates: "{{ venv_dir }}/bin/activate"
+
+    - name: Install Python dependencies
+      become_user: ec2-user
+      pip:
+        requirements: "{{ app_dir }}/requirements.txt"
+        virtualenv: "{{ venv_dir }}"
+
+    - name: Configure systemd service
+      copy:
+        dest: /etc/systemd/system/{{ app_name }}.service
+        content: |
+          [Unit]
+          Description=Gunicorn instance to serve {{ app_name }}
+          After=network.target
+
+          [Service]
+          User=ec2-user
+          Group=nginx
+          WorkingDirectory={{ app_dir }}
+          Environment="PATH={{ venv_dir }}/bin"
+          ExecStart={{ venv_dir }}/bin/gunicorn -w {{ gunicorn_workers }} --bind unix:application.sock -m 007 wsgi
+          [Install]
+          WantedBy=multi-user.target
+      notify: 
+        - restart {{ app_name }}
+
+    - name: Enable and start the Flask app service
+      systemd:
+        name: "{{ app_name }}"
+        enabled: yes
+        state: started
+
+    - name: Configure Nginx
+      copy:
+        dest: /etc/nginx/conf.d/{{ app_name }}.conf
+        content: |
+          server {
+            listen 80;
+            server_name {{ ansible_ssh_host }};
+
+            location / {
+            proxy_set_header Host $http_host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_pass http://unix:/home/ec2-user/application/application.sock;
+            }
+          }
+
+    - name: Enable and start Nginx
+      systemd:
+        name: nginx
+        enabled: yes
+        state: started
+
+  handlers:
+    - name: restart {{ app_name }}
+      systemd:
+        name: "{{ app_name }}"
+        state: restarted
