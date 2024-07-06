@@ -70,7 +70,7 @@
 
     - name: Recursively change ownership of a directory
       ansible.builtin.file:
-        path: /etc/foo
+        path: /home/ec2-user
         state: directory
         mode: '0710'
 
