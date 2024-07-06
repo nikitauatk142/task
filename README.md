@@ -11,7 +11,7 @@ Download and install Ansible https://docs.ansible.com/ansible/latde/getting-star
 
 Download, install and configure AWS CLI https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html
 
-Terraform will use default AWS CLI User
+Terraform will use default AWS CLI User credentianl. Check that you have policy for creating resource in AWS (EC2, VPC, Subnets, Security group)
 # Before start!
 
 This installation olny for linux machine and in aws uses only Amazon linux OS Images (ami-08ca6be1dc85b0e84) in eu-west-1a
