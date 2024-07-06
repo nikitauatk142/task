@@ -1,8 +1,10 @@
-**=========**
+Flask aplication
+=========
+
 This installation uses terraform and ansible-playbook for deploy Flask application to AWS EC2
 
 Getting started
-**---------------**
+---------------
 Download and install Terraform https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli
 
 Download and install Ansible https://docs.ansible.com/ansible/latde/getting-started-install.html
