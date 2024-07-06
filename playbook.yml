@@ -63,6 +63,17 @@
         enabled: yes
         state: started
 
+    - name: Add the user 'ec2-user' to group 'nginx'
+      ansible.builtin.user:
+        name: ec2-user
+        group: nginx
+
+    - name: Recursively change ownership of a directory
+      ansible.builtin.file:
+        path: /etc/foo
+        state: directory
+        mode: '0710'
+
     - name: Configure Nginx
       copy:
         dest: /etc/nginx/conf.d/{{ app_name }}.conf
