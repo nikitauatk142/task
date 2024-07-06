@@ -1,9 +1,8 @@
-Example Flask application
-=========
+**=========**
 This installation uses terraform and ansible-playbook for deploy Flask application to AWS EC2
 
 Getting started
----------------
+**---------------**
 Download and install Terraform https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli
 
 Download and install Ansible https://docs.ansible.com/ansible/latde/getting-started-install.html
@@ -26,31 +25,31 @@ Also this pair using for ansible ssh connection to EC2
 This installation will create VPC, Subnets, Security group for EC2 and instance (*.tf files), install Nginx, Flask app from app dir by using ansible playbook (playbook.yml)
 
 In app dir check application code /app/application.py
+*.tf - terrform files 
+playbook.yml - the ansible playbook contains tasks that are performed when the instance is deployed. Check what every step is doing
 
-playbook.yml - the ansible playbook contains tasks that are performed when the instance is deployed
+**# 1. Clone the project**
 
-#### 1. Clone the project
-
-#### 2. Run in task directory for initializing a working directory
+**# 2. Run in task directory for initializing a working directory**
 
 ```
 terraform init
 ```
-#### 3. Run for creating an execution plan, which lets you preview the changes that Terraform plans to make to your infrastructure
+**# 3. Run for creating an execution plan, which lets you preview the changes that Terraform plans to make to your infrastructure**
 ```
 terraform plan
 ```
-#### 4. Run for executing the actions proposed in a Terraform plan
+**# 4. Run for executing the actions proposed in a Terraform plan**
 ```
 terraform apply
 ```
-#### 5. In output check your EC2 IP 
+**# 5. In output check your EC2 IP**
 
-Go to http://ec2_ip/hello in browser 
+Go to http://ec2_ip/hello in browser
 
 Output shoul be "hello prozorro"
 
-#### 6. For delete run:
+**# 6. For delete run:**
 ```
 terraform destroy
 ```
